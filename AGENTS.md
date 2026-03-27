@@ -101,6 +101,36 @@ Do not stop halfway if the slice can be closed end-to-end.
 - Prefer adapters, feature flags, and bounded seams over broad rewrites.
 - Keep names aligned to the domain, not the tool.
 
+## Packaging Rule: Zero-Network Distribution
+
+Every distributable package (installer, bundle, runtime) must be self-contained.
+No network connection can be assumed at the moment of use.
+
+This means:
+
+- **All dependencies must be bundled.** If the installer needs `adb`, bundle `adb`. If it needs a runtime, bundle the runtime. Do not ask the user to download anything at install time.
+- **No fetch-on-first-run.** The package must work from the moment it is copied to the operator's machine, whether from USB stick, local share, or pre-downloaded archive.
+- **Exceptions must be explicit.** If a dependency cannot be bundled (e.g., OS-level drivers), document the pre-requisite and the reason it cannot be included.
+- **The preparation window is before the emergency.** The user downloads/assembles the package while they still have connectivity. During the emergency, everything runs from what is already on disk.
+
+This rule applies to:
+
+- `bootstrap/releases/` distribution packages (Mac, Windows)
+- Emergency bundle `.zip` files
+- Any installer wizard or GUI
+- The on-device runtime after installation
+
+Rationale: the entire product exists for the moment when the network is gone. If the installer itself needs the network, it has already failed.
+
+## Commit Policy
+
+The first commit of this bootstrap was done manually by the user.
+From now on, the agent must ask before committing:
+
+> "Vuoi che committo io o preferisci farlo manualmente?"
+
+Do not assume permission carries over from one session to the next.
+
 ## Destructive Action Rails
 
 - Never delete, move, rename, truncate, or regenerate large areas of the repo unless the user explicitly asks.

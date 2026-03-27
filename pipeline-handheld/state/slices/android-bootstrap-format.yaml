@@ -1,0 +1,11 @@
+name: "android-bootstrap-format"
+responsibility: "Document and codify the Android bootstrap bundle manifest, layout, storage degradation rules, and local validation path."
+touches:
+  - "docs/emergency"
+  - "bootstrap/android"
+  - "pipeline-handheld/state"
+depends_on: []
+reuse_mode: "adapt"
+slice_id: "android-bootstrap-format"
+display_name: "android-bootstrap-format"
+source_phase: "seams"

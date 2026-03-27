@@ -9,7 +9,7 @@ The API is not public and should not be exposed on the internet.
 ## Base URL
 
 ```text
-http://127.0.0.1:4187/api/v1
+http://127.0.0.1:1234/api/v1
 ```
 
 ## Core model

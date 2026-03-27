@@ -1,0 +1,45 @@
+project_name: "emergency-bootstrap"
+
+slice:
+  name: "android bootstrap bundle format"
+  strategy: "Reuse upstream collection-manifest contracts as bootstrap seed inputs, adapt them into a file-based Android bundle, and keep install behavior local, additive, and Docker-free."
+
+reuse:
+  upstream_paths:
+    - "collections/kiwix-categories.json"
+    - "collections/maps.json"
+    - "collections/wikipedia.json"
+    - "admin/types/collections.ts"
+    - "docs/emergency/ARCHITECTURE.md"
+    - "docs/emergency/LOCAL_API.md"
+  adapters:
+    - "bootstrap/android/bootstrap-manifest.schema.json maps emergency bootstrap metadata to upstream collection manifests and loopback defaults."
+    - "bootstrap/android/validate-bootstrap-manifest.mjs validates the bundle manifest locally without Adonis or Docker dependencies."
+  new_local_modules:
+    - "docs/emergency/ANDROID_BOOTSTRAP_FORMAT.md"
+    - "bootstrap/android/examples/minimal/bootstrap.json"
+    - "bootstrap/android/README.md"
+
+contracts:
+  local_api_endpoints:
+    - "No new endpoints; the bundle seeds the documented loopback runtime contract at http://127.0.0.1:1234/api/v1."
+  storage_entities:
+    - "bootstrap_manifest"
+    - "storage_profile"
+    - "payload_descriptor"
+    - "upstream_input"
+  settings_keys:
+    - "bootstrap.default_storage_profile"
+    - "bootstrap.preferred_abi"
+    - "bootstrap.seed_network_policy"
+
+implementation_slices:
+  - name: "android-bootstrap-format"
+    responsibility: "Document and codify the Android bootstrap bundle manifest, layout, storage degradation rules, and local validation path."
+    touches: ["docs/emergency", "bootstrap/android", "pipeline-handheld/state"]
+    depends_on: []
+    reuse_mode: "adapt"
+
+warnings:
+  - "The bundle format intentionally avoids APK split delivery, OCI images, and Docker-centric installers."
+  - "Launcher and daemon lifecycle details remain provisional until a real Android host app exists."

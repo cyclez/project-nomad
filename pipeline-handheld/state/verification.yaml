@@ -1,0 +1,24 @@
+status: "green"
+summary: "The Android bootstrap slice preserves hard-offline behavior, keeps OFF and loopback defaults explicit, and adds only an additive file-based bootstrap contract."
+
+checks:
+  hard_offline: "pass"
+  network_policy: "pass"
+  android_bootstrap_fit: "pass"
+  upstream_delta: "pass"
+  repo_safety: "pass"
+
+slice_checks:
+  - name: "android-bootstrap-format"
+    delivery_present: true
+    touched_surfaces_ok: "pass"
+    notes:
+      - "Uses a local ZIP plus bootstrap.json instead of Docker or split-package installers."
+      - "Keeps default runtime network policy OFF and loopback-only API expectations intact."
+      - "Reuses canonical upstream collections manifests as seed inputs."
+
+blockers: []
+
+repair_queue: []
+
+ready_to_apply: true

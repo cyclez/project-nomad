@@ -1,0 +1,46 @@
+project_name: "emergency-bootstrap"
+request_summary: "Define a stupid-simple Android bootstrap bundle format that is installable on older devices, keeps hard-offline behavior intact, and can scale persistent storage down without changing compute assumptions."
+operator_scenario: "An operator needs to side-load the emergency runtime onto a wide range of Android devices, including older models with tight storage budgets, and expects the first run to succeed without the network."
+
+slice:
+  name: "android bootstrap bundle format"
+  objective: "Define a file-based Android bootstrap contract that packages the local runtime, preserves loopback and OFF-by-default behavior, and supports low-storage installation profiles."
+  touched_surfaces: ["pwa", "daemon", "storage", "settings"]
+  user_flow:
+    - "Operator copies one bootstrap ZIP to the device."
+    - "Bootstrap installer validates bootstrap.json and picks the matching ABI payload."
+    - "Installer applies a storage profile, seeds local manifests, and starts the runtime locally in OFF mode."
+  upstream_touchpoints:
+    - "collections/kiwix-categories.json"
+    - "collections/maps.json"
+    - "collections/wikipedia.json"
+    - "admin/types/collections.ts"
+    - "docs/emergency/LOCAL_API.md"
+  non_goals:
+    - "Choose or benchmark the compute stack."
+    - "Implement the Android launcher app."
+    - "Adopt Docker or server-first runtime assumptions."
+
+requirements:
+  hard_offline:
+    - "The bundle must fully seed the local read path without a mandatory first-run network step."
+    - "The installed runtime must remain useful with local files only."
+  network_policy:
+    - "Bootstrap defaults must seed the runtime with base policy OFF."
+    - "The format must not require background registration, Play Store flows, or remote discovery."
+  android_device:
+    - "The install artifact must be side-loadable and inspectable on older Android devices."
+    - "The format must tolerate reduced persistent storage through explicit profiles."
+    - "The payload contract must avoid symlinks, xattrs, Docker layers, and other fragile filesystem semantics."
+  loopback_api:
+    - "Bootstrap metadata must preserve the loopback-only local API contract at http://127.0.0.1:1234/api/v1."
+
+acceptance_checks:
+  - "A contributor can understand the bundle layout and install flow from a single emergency doc."
+  - "A machine-readable schema exists for bootstrap.json."
+  - "A local example manifest demonstrates reduced-storage installation."
+  - "A local validator rejects malformed manifests and incorrect OFF/loopback defaults."
+
+risks:
+  - "ABI packaging details may evolve once the Android host app exists."
+  - "Storage profile thresholds will need real-device tuning."

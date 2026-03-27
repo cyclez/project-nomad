@@ -1,0 +1,193 @@
+{
+  "schema_version": "1.0",
+  "bundle": {
+    "id": "android-bootstrap-core",
+    "version": "2026.03.26",
+    "label": "Emergency Android Bootstrap Core",
+    "format": "zip",
+    "description": "Reduced-storage bootstrap bundle for the emergency runtime."
+  },
+  "compatibility": {
+    "android_api_min": 24,
+    "supported_abis": [
+      "arm64-v8a",
+      "armeabi-v7a"
+    ]
+  },
+  "defaults": {
+    "seed_network_policy": "OFF",
+    "oneshot_enabled": true,
+    "storage_profile": "reduced",
+    "loopback_base_url": "http://127.0.0.1:1234/api/v1"
+  },
+  "runtime": {
+    "pwa_payload_id": "pwa-shell",
+    "daemon_payloads": [
+      {
+        "abi": "arm64-v8a",
+        "payload_id": "daemon-arm64"
+      },
+      {
+        "abi": "armeabi-v7a",
+        "payload_id": "daemon-armv7"
+      }
+    ]
+  },
+  "storage_profiles": [
+    {
+      "id": "full",
+      "label": "Full",
+      "max_persistent_mb": 4096,
+      "keep_tags": [
+        "core",
+        "ui",
+        "daemon",
+        "indexes",
+        "docs",
+        "maps"
+      ],
+      "notes": "Keeps the full bootstrap corpus on device."
+    },
+    {
+      "id": "reduced",
+      "label": "Reduced",
+      "max_persistent_mb": 1024,
+      "keep_tags": [
+        "core",
+        "ui",
+        "daemon",
+        "indexes"
+      ],
+      "drop_tags": [
+        "docs",
+        "maps"
+      ],
+      "notes": "Default low-friction profile for older phones."
+    },
+    {
+      "id": "volatile",
+      "label": "Volatile",
+      "max_persistent_mb": 256,
+      "keep_tags": [
+        "core",
+        "ui",
+        "daemon"
+      ],
+      "drop_tags": [
+        "indexes",
+        "docs",
+        "maps"
+      ],
+      "notes": "Boots locally with the smallest persistent footprint."
+    }
+  ],
+  "payloads": [
+    {
+      "id": "pwa-shell",
+      "kind": "pwa",
+      "path": "payloads/pwa-shell.tar",
+      "abi": "any",
+      "required": true,
+      "retention": "required",
+      "install_tags": [
+        "core",
+        "ui"
+      ],
+      "size_bytes": 10485760,
+      "sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+      "content_type": "application/x-tar"
+    },
+    {
+      "id": "daemon-arm64",
+      "kind": "daemon",
+      "path": "payloads/daemon/arm64-v8a/nomad-daemon.tar",
+      "abi": "arm64-v8a",
+      "required": true,
+      "retention": "required",
+      "install_tags": [
+        "core",
+        "daemon"
+      ],
+      "size_bytes": 16777216,
+      "sha256": "2222222222222222222222222222222222222222222222222222222222222222",
+      "content_type": "application/x-tar"
+    },
+    {
+      "id": "daemon-armv7",
+      "kind": "daemon",
+      "path": "payloads/daemon/armeabi-v7a/nomad-daemon.tar",
+      "abi": "armeabi-v7a",
+      "required": true,
+      "retention": "required",
+      "install_tags": [
+        "core",
+        "daemon"
+      ],
+      "size_bytes": 15728640,
+      "sha256": "3333333333333333333333333333333333333333333333333333333333333333",
+      "content_type": "application/x-tar"
+    },
+    {
+      "id": "search-index-core",
+      "kind": "index",
+      "path": "payloads/indexes/core-search.sqlite",
+      "abi": "any",
+      "required": false,
+      "retention": "rebuildable",
+      "install_tags": [
+        "indexes",
+        "search"
+      ],
+      "size_bytes": 52428800,
+      "sha256": "4444444444444444444444444444444444444444444444444444444444444444",
+      "content_type": "application/vnd.sqlite3"
+    },
+    {
+      "id": "docs-core",
+      "kind": "content",
+      "path": "payloads/content/core-docs.pack",
+      "abi": "any",
+      "required": false,
+      "retention": "evictable",
+      "install_tags": [
+        "docs",
+        "corpus"
+      ],
+      "size_bytes": 209715200,
+      "sha256": "5555555555555555555555555555555555555555555555555555555555555555",
+      "content_type": "application/octet-stream"
+    },
+    {
+      "id": "maps-base",
+      "kind": "map",
+      "path": "payloads/maps/base.pmtiles",
+      "abi": "any",
+      "required": false,
+      "retention": "evictable",
+      "install_tags": [
+        "maps",
+        "corpus"
+      ],
+      "size_bytes": 157286400,
+      "sha256": "6666666666666666666666666666666666666666666666666666666666666666",
+      "content_type": "application/octet-stream"
+    }
+  ],
+  "upstream_inputs": [
+    {
+      "kind": "collections_manifest",
+      "path": "collections/kiwix-categories.json",
+      "required": true
+    },
+    {
+      "kind": "collections_manifest",
+      "path": "collections/maps.json",
+      "required": true
+    },
+    {
+      "kind": "collections_manifest",
+      "path": "collections/wikipedia.json",
+      "required": true
+    }
+  ]
+}

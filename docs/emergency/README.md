@@ -23,6 +23,11 @@ The profile is designed for a dedicated Android device running Ubuntu/Linux wher
 - [Local API](./LOCAL_API.md)
 - [Seam Map](./SEAM_MAP.md)
 - [Collections Seam](./COLLECTIONS_SEAM.md)
+- [Android Bootstrap Format](./ANDROID_BOOTSTRAP_FORMAT.md)
+- [Status](./STATUS.md)
+- [USB Delivery](./USB_DELIVERY.md)
+- [Install Guide](./INSTALL_GUIDE.md)
+- [UI Corner Layout](./UI_CORNERS.md)
 - [Bootstrap Prompt](./BOOTSTRAP_PROMPT.md)
 
 ## Intended use

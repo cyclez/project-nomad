@@ -41,3 +41,12 @@ admin/public/assets
 
 # Admin specific development files
 admin/storage
+
+# Bootstrap — build artifacts and vendored dependencies
+bootstrap/vendor/
+bootstrap/releases/
+bootstrap/apk/.debug.keystore
+bootstrap/apk/nomad-service.apk
+bootstrap/emergency-bootstrap-*.zip
+bootstrap/apk/*.idsig
+bootstrap/apk/res/

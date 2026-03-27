@@ -1,0 +1,317 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://emergency-nomad.local/schemas/android-bootstrap-manifest.schema.json",
+  "title": "Emergency Android Bootstrap Manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "bundle",
+    "compatibility",
+    "defaults",
+    "runtime",
+    "storage_profiles",
+    "payloads",
+    "upstream_inputs"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "bundle": {
+      "$ref": "#/$defs/bundle"
+    },
+    "compatibility": {
+      "$ref": "#/$defs/compatibility"
+    },
+    "defaults": {
+      "$ref": "#/$defs/defaults"
+    },
+    "runtime": {
+      "$ref": "#/$defs/runtime"
+    },
+    "storage_profiles": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/storageProfile"
+      }
+    },
+    "payloads": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/payload"
+      }
+    },
+    "upstream_inputs": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/upstreamInput"
+      }
+    }
+  },
+  "$defs": {
+    "bundle": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "version",
+        "label",
+        "format"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/idToken"
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9._-]{1,32}$"
+        },
+        "label": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 80
+        },
+        "format": {
+          "const": "zip"
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        }
+      }
+    },
+    "compatibility": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "android_api_min",
+        "supported_abis"
+      ],
+      "properties": {
+        "android_api_min": {
+          "type": "integer",
+          "minimum": 21,
+          "maximum": 40
+        },
+        "supported_abis": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "arm64-v8a",
+              "armeabi-v7a",
+              "x86_64"
+            ]
+          }
+        }
+      }
+    },
+    "defaults": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "seed_network_policy",
+        "oneshot_enabled",
+        "storage_profile",
+        "loopback_base_url"
+      ],
+      "properties": {
+        "seed_network_policy": {
+          "const": "OFF"
+        },
+        "oneshot_enabled": {
+          "const": true
+        },
+        "storage_profile": {
+          "$ref": "#/$defs/idToken"
+        },
+        "loopback_base_url": {
+          "const": "http://127.0.0.1:1234/api/v1"
+        }
+      }
+    },
+    "runtime": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "pwa_payload_id",
+        "daemon_payloads"
+      ],
+      "properties": {
+        "pwa_payload_id": {
+          "$ref": "#/$defs/idToken"
+        },
+        "daemon_payloads": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/daemonPayloadRef"
+          }
+        }
+      }
+    },
+    "storageProfile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "label",
+        "max_persistent_mb",
+        "keep_tags"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/idToken"
+        },
+        "label": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 32
+        },
+        "max_persistent_mb": {
+          "type": "integer",
+          "minimum": 64
+        },
+        "keep_tags": {
+          "$ref": "#/$defs/tagArray"
+        },
+        "drop_tags": {
+          "$ref": "#/$defs/tagArray"
+        },
+        "notes": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        }
+      }
+    },
+    "payload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "kind",
+        "path",
+        "abi",
+        "required",
+        "retention",
+        "install_tags",
+        "size_bytes",
+        "sha256"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/idToken"
+        },
+        "kind": {
+          "enum": [
+            "pwa",
+            "daemon",
+            "content",
+            "map",
+            "index",
+            "config"
+          ]
+        },
+        "path": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9._/-]{0,119}$"
+        },
+        "abi": {
+          "enum": [
+            "any",
+            "arm64-v8a",
+            "armeabi-v7a",
+            "x86_64"
+          ]
+        },
+        "required": {
+          "type": "boolean"
+        },
+        "retention": {
+          "enum": [
+            "required",
+            "rebuildable",
+            "evictable"
+          ]
+        },
+        "install_tags": {
+          "$ref": "#/$defs/tagArray"
+        },
+        "size_bytes": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "content_type": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        }
+      }
+    },
+    "daemonPayloadRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "abi",
+        "payload_id"
+      ],
+      "properties": {
+        "abi": {
+          "enum": [
+            "arm64-v8a",
+            "armeabi-v7a",
+            "x86_64"
+          ]
+        },
+        "payload_id": {
+          "$ref": "#/$defs/idToken"
+        }
+      }
+    },
+    "upstreamInput": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "path",
+        "required"
+      ],
+      "properties": {
+        "kind": {
+          "const": "collections_manifest"
+        },
+        "path": {
+          "type": "string",
+          "pattern": "^collections/[a-z0-9._/-]+\\.json$"
+        },
+        "required": {
+          "type": "boolean"
+        }
+      }
+    },
+    "idToken": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]{0,47}$"
+    },
+    "tagArray": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z0-9][a-z0-9-]{0,31}$"
+      }
+    }
+  }
+}
