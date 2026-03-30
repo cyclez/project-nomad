@@ -12,61 +12,89 @@ cat <<'WELCOME'
   ║                                               ║
   ╚═══════════════════════════════════════════════╝
 
-  This folder contains everything needed to install
-  an emergency offline information system on an
-  Android phone via USB cable.
+  This folder can install Emergency Nomad on an
+  Android phone by USB cable.
 
   No internet connection is needed.
+  After install, the phone runs locally by itself.
 
   ─────────────────────────────────────────────────
 
-  BEFORE AN EMERGENCY (do this now):
+  BEFORE AN EMERGENCY:
 
-  1. On the Android phone:
-     Settings → About phone → tap "Build number" 7 times
-     Settings → Developer options → USB debugging: ON
+  1. On the phone, open Settings.
 
-  2. Connect the phone via USB cable (must be a DATA cable).
+  2. Find "Build number".
+     Use Settings search if needed.
+     Then tap it 7 times.
 
-  3. On the phone, tap "Allow" when asked.
-     Check "Always allow from this computer".
+  3. Go back and find "USB debugging".
+     Use Settings search if needed.
+     Turn it ON.
+
+  4. Connect the phone with a real data cable.
+
+  5. On the phone, tap "Allow" when asked.
+     Also check:
+     "Always allow from this computer"
+
+  ─────────────────────────────────────────────────
+
+  IF MACOS BLOCKS THE APP:
+
+     If you see "Unidentified Developer",
+     open Terminal like this:
+
+       Press Command + Space
+       Type Terminal
+       Press Return
+
+     Then type:
+
+       bash "./Emergency Unblock.command"
+
+     Then try again.
 
   ─────────────────────────────────────────────────
 
   DURING AN EMERGENCY:
 
-     Double-click "Emergency Install"
+     Double-click "Emergency Install.command"
 
-     That's it. Follow the on-screen instructions.
+     Read the screen.
+     Type y and press Return when asked.
 
   ─────────────────────────────────────────────────
 
   AFTER PHONE REBOOT:
 
-     Double-click "Emergency Restart"
+     Wait up to 2 minutes.
+     If the local page does not come back,
+     then double-click "Emergency Restart.command"
 
   ─────────────────────────────────────────────────
 
   TO REMOVE FROM PHONE:
 
-     Double-click "Emergency Uninstall"
+     Double-click "Emergency Uninstall.command"
 
   ─────────────────────────────────────────────────
 
   FILES IN THIS FOLDER:
 
-     Emergency Install       — install the runtime
-     Emergency Restart       — restart after reboot
-     Emergency Restart (headless) — broken screen mode
-     Emergency Uninstall     — remove from phone
-     Welcome                 — this screen
-     *.zip                   — the emergency bundle
-     tools/                  — scripts (do not modify)
+     Emergency Install.command - install to the phone
+     Emergency Restart.command - fallback restart after reboot
+     Emergency Restart (headless).command - broken-screen mode
+     Emergency Uninstall.command - remove from phone
+     Emergency Unblock.command - remove macOS security block
+     Welcome.command - this screen
+     *.zip - the emergency bundle
+     tools/ - scripts, do not modify
 
   ─────────────────────────────────────────────────
 
   ADB (Android Debug Bridge) is included.
-  Python3 is required (built-in on macOS since 2019).
+  Python3 is also required.
 
 WELCOME
 

@@ -1,303 +1,305 @@
-# Guida Installazione — Emergency Nomad
+# Emergency Nomad Installation Guide
 
-Questa guida spiega come installare il runtime di emergenza su un
-telefono Android usando un computer e un cavo USB.
+This guide is written for a person who is not technical.
+It explains how to install the emergency runtime onto an Android phone using a USB cable.
 
-Non consigliamo a nessuno di installare questo software.
-È sperimentale, pensato per telefoni dedicati ("dev-burner"),
-non per il telefono personale. Leggere DECLARATION.md prima di procedere.
+Read this first
+---------------
 
----
+- This is emergency software.
+- It is meant for a dedicated Android utility phone, not a personal daily-use phone.
+- The installer copies the runtime to the phone.
+- It may also install the helper APK `com.emergency.nomad` by ADB.
+- It does not download anything from the internet during install.
+- After install, normal use is on the phone itself.
+- The USB cable is for install, broken-screen mode, and fallback restart.
 
-## Cosa serve
+What you need
+-------------
 
-Prima di tutto, metti insieme queste cose:
+1. A computer.
+   Supported paths:
+   - Mac
+   - Linux
+   - Windows with the packaged installer or WSL
 
-1. **Un computer** (Mac, Linux, o Windows con WSL)
-2. **Un telefono Android** dedicato — non il tuo telefono personale
-3. **Un cavo USB** che trasferisce dati
-   - ATTENZIONE: molti cavi economici sono solo per la carica.
-     Se il cavo era nella scatola di un caricatore a muro,
-     probabilmente NON trasferisce dati.
-   - Un cavo buono è quello della scatola del telefono stesso.
-4. **Il file .zip del bundle** scaricato sul computer
-   - Scaricalo PRIMA dell'emergenza, quando hai ancora internet.
-     In emergenza non avrai rete.
+2. An Android phone.
+   Use a phone dedicated to this purpose if possible.
 
----
+3. A real USB data cable.
+   Some cheap cables are charge-only.
+   If the phone is charging but the computer never sees it, the cable may be the problem.
 
-## Parte 1 — Preparare il telefono (fare PRIMA dell'emergenza)
+4. The emergency bundle `.zip` file.
+   Download it before the emergency.
 
-Questa è la parte più complicata. Falla con calma, una sola volta.
-Dopo non serve rifarla mai più.
+Prepare the phone now, not later
+--------------------------------
 
-### 1.1 Attivare le Opzioni Sviluppatore
+Do this while the phone still works and the screen is usable.
 
-Queste opzioni sono nascoste. Per trovarle devi fare un trucco
-(non è uno scherzo, funziona davvero):
+### 1. Turn on Developer Options
 
-**Samsung:**
-Impostazioni → Informazioni sul telefono → Informazioni software
-→ tocca "Numero build" 7 volte di fila velocemente.
+Do not assume you already have this.
+Most people do not.
 
-**Xiaomi / Redmi:**
-Impostazioni → Info sistema → tocca "Versione MIUI" 7 volte di fila.
+Try this first:
 
-**Pixel / Android stock:**
-Impostazioni → Sistema → Informazioni sul telefono
-→ tocca "Numero build" 7 volte.
+1. Open `Settings`.
+2. Tap the search bar inside `Settings`.
+3. Type `Build number`.
+4. Open the result.
+5. Tap `Build number` 7 times.
 
-**Huawei:**
-Impostazioni → Sistema → Informazioni telefono
-→ tocca "Numero build" 7 volte.
+If search does not find it, try:
 
-**Tutti gli altri:**
-Cerca "Numero build" nella barra di ricerca delle Impostazioni.
-Toccalo 7 volte.
+1. Open `Settings`.
+2. Open `About phone`.
+3. Open `Software information`.
+4. Find `Build number`.
+5. Tap it 7 times.
 
-Dopo 7 tocchi vedrai un messaggio tipo
-"Ora sei uno sviluppatore" o "Modalità sviluppatore attivata".
+If the phone asks for a PIN or passcode, enter it.
+The phone should then say that Developer Options are enabled.
 
-### 1.2 Attivare Debug USB
+### 2. Turn on USB debugging
 
-Ora che le Opzioni Sviluppatore sono visibili:
+Try search first:
 
-Impostazioni → Sistema → Opzioni sviluppatore → Debug USB → attiva.
+1. Open `Settings`.
+2. Tap the search bar.
+3. Type `USB debugging`.
+4. Open the result.
+5. Turn `USB debugging` on.
 
-Il telefono mostra un avviso. È normale. Conferma.
+If search does not find it, try:
 
-**Solo Xiaomi / Redmi — passo extra obbligatorio:**
-Nelle stesse Opzioni sviluppatore, cerca anche
-"Debug USB (Impostazioni di sicurezza)" e attivalo.
-Xiaomi chiede di accedere col tuo account Mi e di avere una SIM inserita.
-Fallo adesso mentre hai rete. In emergenza non potrai.
+1. Open `Settings`.
+2. Open `Developer options`.
+3. Turn `USB debugging` on.
 
-### 1.3 Autorizzare il computer
+The phone may show a warning.
+Accept it.
 
-Collega il cavo USB tra il computer e il telefono.
-Sul telefono apparirà un popup:
+### 3. Approve this computer
 
-> "Consentire il debug USB da questo computer?"
+1. Connect the phone to the computer with the USB cable.
+2. A message should appear on the phone asking whether to allow USB debugging.
+3. Tap `Allow`.
+4. Also check:
+   `Always allow from this computer`
 
-Spunta **"Consenti sempre da questo computer"** e tocca OK.
+This step matters.
+If the phone screen is broken later, the computer must already be approved.
 
-IMPORTANTE: questo passaggio va fatto ADESSO, mentre lo schermo funziona.
-Se lo schermo si rompe dopo, il computer sarà già autorizzato.
+Mac users: if macOS says "Unidentified Developer"
+-------------------------------------------------
 
-### 1.4 Verificare che funziona
+The Mac package is not signed with an Apple Developer certificate.
+macOS may block it the first time.
 
-Sul computer, apri il Terminale:
+If you see a message like:
 
-- **Mac:** cerca "Terminale" con Spotlight (Cmd + Spazio, scrivi Terminale)
-- **Linux:** Ctrl + Alt + T
-- **Windows:** apri "Ubuntu" dal menu Start (serve WSL installato)
+- "cannot be opened because the developer cannot be verified"
+- "Apple could not verify it is free of malware"
 
-Scrivi questo e premi Invio:
+do this:
 
-```
-adb devices
-```
+1. Open `Terminal`.
+   The easiest way:
+   - press `Command + Space`
+   - type `Terminal`
+   - press `Return`
 
-Devi vedere qualcosa come:
+2. In the Terminal window, type:
 
-```
-List of devices attached
-ABC123XYZ    device
-```
-
-Se vedi `ABC123XYZ    device` → tutto ok. Il telefono è pronto.
-
-Se vedi solo `List of devices attached` senza niente sotto →
-il telefono non è collegato, o il cavo è solo per la carica,
-o il Debug USB non è attivo.
-
-Se vedi `unauthorized` → sul telefono non hai toccato "Consenti".
-Guarda lo schermo del telefono.
-
-### 1.5 Installare gli strumenti sul computer (una sola volta)
-
-Il computer ha bisogno di due programmi: `adb` e `node`.
-
-**Mac (con Homebrew):**
-```
-brew install android-platform-tools node
+```text
+cd 
 ```
 
-**Mac (senza Homebrew):**
-Installa prima Homebrew aprendo il Terminale e incollando:
-```
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-```
-Poi esegui il comando sopra.
+There is one space after `cd`.
 
-**Linux (Ubuntu/Debian):**
-```
-sudo apt install adb nodejs
-```
+3. Drag the installer folder from Finder into the Terminal window.
+   The folder path will appear by itself.
 
-**Windows (WSL Ubuntu):**
-```
-sudo apt install adb nodejs
-```
-Nota: su Windows l'ADB dentro WSL potrebbe non vedere il telefono.
-In quel caso installa ADB nativo per Windows da
-https://developer.android.com/tools/releases/platform-tools
-e usalo dal Prompt dei comandi, non da WSL.
+4. Press `Return`.
 
-### 1.6 Fatto
+5. Then type:
 
-Il telefono è pronto. Mettilo nel cassetto.
-Il giorno dell'emergenza avrai bisogno solo del cavo e del computer.
-
----
-
-## Parte 2 — Installare il giorno dell'emergenza
-
-Non hai rete. Hai il computer, il cavo, il telefono preparato, e il
-file .zip scaricato giorni o settimane fa.
-
-### Su Mac — metodo semplice
-
-1. Metti il file `.zip` nella stessa cartella di `Emergency Install.command`
-2. Fai doppio click su `Emergency Install.command`
-3. Si apre una finestra. Leggi cosa dice. Scrivi `y` e premi Invio.
-4. Aspetta che finisca.
-5. Stacca il cavo.
-6. Sul telefono si è aperto il browser. Sei operativo.
-
-### Su tutti i sistemi — metodo terminale
-
-1. Apri il Terminale.
-2. Scrivi (o incolla) questo:
-
-```
-cd percorso/dove/hai/il/progetto
-./bootstrap/usb-push.sh percorso/del/file/bundle.zip
+```bash
+bash "./Emergency Unblock.command"
 ```
 
-Esempio reale:
+6. Press `Return`.
+7. Wait for the word `Done`.
+8. Double-click `Emergency Install.command` again.
 
+If the helper file is missing, use:
+
+```bash
+xattr -dr com.apple.quarantine .
 ```
-cd ~/Scaricati/emergency-nomad
-./bootstrap/usb-push.sh ~/Scaricati/emergency-bootstrap-core-2026.03.26.zip
+
+Simple install on Mac
+---------------------
+
+If you are using the prepared Mac package:
+
+1. Put the emergency bundle `.zip` file in the same folder as `Emergency Install.command`.
+2. Connect the phone by USB.
+3. Unlock the phone and leave the screen on.
+4. Double-click `Emergency Install.command`.
+5. If the Mac blocks it, do the steps in the previous section.
+6. Read the screen.
+7. When asked `Proceed? [y/N]`, type:
+
+```text
+y
 ```
 
-3. Lo script ti mostra una dichiarazione di cosa farà. Leggi.
-4. Scrivi `y` e premi Invio.
-5. Aspetta. Vedrai i file che vengono copiati.
-6. Alla fine dice "done". Stacca il cavo.
-7. Sul telefono si è aperto il browser. Lo script mostra un indirizzo
-   tipo `http://127.0.0.1:1234/s/a8f3b2e1c4d5` — salvalo come
-   segnalibro. L'ultima parte è un codice di sicurezza unico.
+8. Press `Return`.
+9. Wait.
+10. When it finishes, the phone should open a browser page.
 
----
+If the phone restarts later:
 
-## Parte 3 — Uso dopo l'installazione
+1. Wait up to 2 minutes.
+2. The local runtime should start again by itself.
+3. If the local page does not come back, reconnect the phone by USB.
+4. Double-click `Emergency Restart.command`.
 
-### Schermo funzionante
+If the phone screen is broken:
 
-- Apri Chrome (o qualsiasi browser) sul telefono
-- Vai all'indirizzo che lo script ti ha mostrato alla fine dell'installazione.
-  Ha questa forma: `http://127.0.0.1:1234/s/xxxxxx`
-  dove `xxxxxx` è un codice unico generato durante l'installazione.
-- Non serve internet. Tutto è locale.
+1. Reconnect the phone by USB.
+2. Double-click `Emergency Restart (headless).command`.
+3. Use the browser on the Mac.
 
-Consiglio: salva questo indirizzo come segnalibro o aggiungilo
-alla schermata home. Se lo perdi, lo puoi ritrovare collegando
-il cavo e lanciando `--restart` — lo script lo mostra di nuovo.
+Terminal install on Mac, Linux, or WSL
+--------------------------------------
 
-### Schermo rotto
+Use this only if you are not using the prepared desktop package.
 
-Se il telefono ha lo schermo rotto ma è acceso:
+You need:
 
-1. Collega il cavo USB al computer.
-2. Sul computer:
+- `adb`
+- `python3`
+
+Examples:
+
+Mac with Homebrew:
+
+```bash
+brew install android-platform-tools python
 ```
-./bootstrap/usb-push.sh --restart --headless
+
+Ubuntu / Debian / WSL:
+
+```bash
+sudo apt install adb python3
 ```
-3. Si apre il browser sul computer con la stessa interfaccia.
-4. Tieni il cavo collegato.
 
----
+Install from Terminal:
 
-## Parte 4 — Se il telefono si riavvia
-
-Il telefono si è spento (batteria scarica, riavvio, ecc.).
-I dati e i file NON si perdono. Serve solo rilanciare il programma.
-
-1. Collega il cavo USB.
-2. Sul computer:
+```bash
+cd /path/to/emergency-nomad
+./bootstrap/usb-push.sh /path/to/bundle.zip
 ```
-./bootstrap/usb-push.sh --restart
-```
-3. Aspetta 5 secondi. Stacca il cavo.
-4. Il telefono funziona di nuovo.
 
----
+What happens next:
 
-## Problemi comuni
+1. The script checks the phone.
+2. The script shows a declaration.
+3. Type `y` and press Enter.
+4. The script copies files to the phone.
+5. If the package includes it, the helper APK is installed.
+6. The local browser page is opened on the phone.
+
+After installation
+------------------
+
+- The phone uses a local address like `http://127.0.0.1:1234/...`
+- This page is local to the phone.
+- Internet is not required for local use.
+- You can unplug the USB cable after install.
+- If you want the phone to be radio-silent, turn off mobile data, Wi-Fi, and Bluetooth yourself.
+  The installer does not change those settings for you.
+
+Common problems
+---------------
 
 ### "adb: command not found"
 
-Adb non è installato. Vedi la sezione 1.5.
+`adb` is not installed, or it is not in the current PATH.
+Install it first.
 
 ### "error: no ADB device connected"
 
-- Il cavo è solo per la carica? Prova un altro cavo.
-- Il Debug USB è attivo? Controlla nelle Opzioni sviluppatore.
-- Il telefono è acceso?
+Check these:
 
-### "error: multiple devices connected"
+1. The phone is on.
+2. USB debugging is enabled.
+3. The cable is a data cable, not charge-only.
+4. The phone already approved this computer.
 
-Hai più di un telefono collegato. Stacca gli altri, oppure
-specifica quale usare:
+### The phone shows `unauthorized`
 
+The phone is waiting for you to approve the computer.
+Look at the phone screen and tap `Allow`.
+Also check `Always allow from this computer`.
+
+### The Mac says "developer cannot be verified"
+
+Do not guess.
+Do this exactly:
+
+1. Press `Command + Space`
+2. Type `Terminal`
+3. Press `Return`
+4. Type `cd ` and then drag the installer folder into the window
+5. Press `Return`
+6. Type `bash "./Emergency Unblock.command"`
+7. Press `Return`
+8. Wait for `Done`
+9. Try `Emergency Install.command` again
+
+### The script says multiple devices are connected
+
+More than one Android device is plugged in.
+Disconnect the others, or choose the device with `-s SERIAL`.
+
+### The browser does not open on the phone
+
+Wait a few seconds, then try again.
+If needed, reconnect by USB and run:
+
+```bash
+./bootstrap/usb-push.sh --restart
 ```
-adb devices
-```
-Nota il codice del telefono giusto (es. `ABC123XYZ`), poi:
-```
-./bootstrap/usb-push.sh -s ABC123XYZ bundle.zip
-```
 
-### "unauthorized"
+### Windows and WSL do not see the phone
 
-Il telefono non ha mai autorizzato questo computer.
-Guarda lo schermo del telefono — c'è un popup che aspetta.
-Se lo schermo è rotto e non hai autorizzato prima, non c'è modo
-di procedere senza uno schermo funzionante.
+This can happen.
+Use the Windows package or native Windows ADB instead of WSL for that machine.
 
-### "error: device API XX < minimum 21"
+Short version
+-------------
 
-Il telefono è troppo vecchio (prima di Android 5.0, prima del 2014).
-Non è supportato.
+Do this now:
 
-### Lo script dice "done" ma il browser non si apre
+1. Turn on Developer Options.
+2. Turn on USB debugging.
+3. Approve this computer.
+4. Keep the bundle file ready.
 
-Il daemon potrebbe non essere ancora disponibile (il binario potrebbe
-non essere ancora stato compilato nel bundle). Prova ad aprire
-manualmente Chrome e vai a `127.0.0.1:1234`.
+Do this during the emergency:
 
-### Xiaomi chiede l'account Mi per il Debug USB
+1. Connect the phone by USB.
+2. On Mac, double-click `Emergency Install.command`.
+3. Type `y`.
+4. Wait.
 
-È un requisito Xiaomi. Devi farlo PRIMA dell'emergenza, con rete attiva.
-Vedi sezione 1.2.
+Do this after phone reboot:
 
-### Windows: ADB non vede il telefono dentro WSL
-
-Usa ADB nativo per Windows. Scaricalo da:
-https://developer.android.com/tools/releases/platform-tools
-
-Apri il Prompt dei comandi (non WSL) e usa quello.
-
----
-
-## Riepilogo rapido
-
-| Quando | Cosa fai |
-|--------|----------|
-| Adesso (con calma) | Prepara il telefono (sezioni 1.1-1.6). Scarica il bundle .zip. |
-| Emergenza | Attacca cavo. Doppio click (Mac) o un comando (terminale). Stacca cavo. |
-| Uso quotidiano | Apri browser → usa il segnalibro salvato |
-| Telefono si riavvia | Attacca cavo. `--restart`. Stacca cavo. |
-| Schermo rotto | Attacca cavo. `--restart --headless`. Usa il browser del computer. |
+1. Wait up to 2 minutes.
+2. If the local page does not come back, connect the phone by USB.
+3. Double-click `Emergency Restart.command`.

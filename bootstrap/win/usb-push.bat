@@ -88,6 +88,10 @@ if "%ADB%"=="" (
 )
 echo adb: %ADB%
 
+set "SERVICE_APK="
+if exist "%SCRIPT_DIR%\tools\nomad-service.apk" set "SERVICE_APK=%SCRIPT_DIR%\tools\nomad-service.apk"
+if exist "%SCRIPT_DIR%\apk\nomad-service.apk" set "SERVICE_APK=%SCRIPT_DIR%\apk\nomad-service.apk"
+
 :: Check tar (built-in Windows 10+)
 where tar >nul 2>&1
 if errorlevel 1 (
@@ -210,12 +214,18 @@ echo.
 echo THIS WILL:
 echo   - overwrite any previous emergency-nomad installation
 echo   - use storage space on the device
+if defined SERVICE_APK (
+    echo   - install the bundled helper APK ^(com.emergency.nomad^)
+) else (
+    echo   - install only the runtime tree ^(no helper APK bundled in this folder^)
+)
 echo   - launch a daemon on 127.0.0.1:%DAEMON_PORT%
 echo.
 echo THIS WILL NOT:
 echo   - use the network
-echo   - install an APK or modify system settings
 echo   - root the device
+echo   - modify bootloader, recovery, or the system partition
+echo   - change radios or airplane-mode state for you
 echo.
 
 if "%AUTOYES%"=="1" (
@@ -340,10 +350,6 @@ echo.
 :: ================================================================== install APK
 echo --- installing service APK ---
 echo.
-
-set "SERVICE_APK="
-if exist "%SCRIPT_DIR%\tools\nomad-service.apk" set "SERVICE_APK=%SCRIPT_DIR%\tools\nomad-service.apk"
-if exist "%SCRIPT_DIR%\apk\nomad-service.apk" set "SERVICE_APK=%SCRIPT_DIR%\apk\nomad-service.apk"
 
 if defined SERVICE_APK (
     echo apk: !SERVICE_APK!

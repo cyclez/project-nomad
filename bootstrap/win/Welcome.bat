@@ -15,6 +15,7 @@ echo   an emergency offline information system on an
 echo   Android phone via USB cable.
 echo.
 echo   No internet connection is needed.
+echo   After install, the phone runs locally by itself.
 echo.
 echo   ─────────────────────────────────────────────────
 echo.
@@ -37,7 +38,9 @@ echo      Double-click "Emergency Install"
 echo.
 echo   AFTER PHONE REBOOT:
 echo.
-echo      Double-click "Emergency Restart"
+echo      Wait up to 2 minutes.
+echo      If the local page does not come back,
+echo      double-click "Emergency Restart"
 echo.
 echo   TO REMOVE FROM PHONE:
 echo.

@@ -92,11 +92,33 @@ When building a slice, close the loop as far as the task reasonably allows:
 
 Do not stop halfway if the slice can be closed end-to-end.
 
+## Prime Directive: Installation Reliability
+
+**Installation reliability beats features. Always.**
+
+This is emergency software. The person using it may be stressed, in the dark, with a cracked screen, on a phone they've never seen before. Every development decision must pass this test:
+
+> "Does this make the install more likely to fail?"
+>
+> If yes, don't do it. Find another way or drop the feature.
+
+Rules:
+
+- **No install step may depend on network.** Not at install time, not at first run, not ever. The bundle is the world.
+- **No install step may require user judgment.** If the user has to choose between options, choose for them. The installer knows the device.
+- **No install step may fail silently.** If something goes wrong, say what, say why, say what to do. The user cannot debug.
+- **No feature may break the install path.** A feature that works 90% of the time but causes install failures 10% of the time ships disabled or doesn't ship.
+- **The install must work on the worst device in scope.** API 21, 1GB RAM, USB 2.0, 64MB available storage. If it doesn't work there, it doesn't work.
+- **Every phase has an install reliability gate.** If the gate doesn't pass, the phase is not complete — regardless of how many features work.
+
+See `docs/emergency/DEVELOPMENT_PHASES.md` for phase-specific gates.
+
 ## Domain Rules
 
 - Hard-offline read behavior is sacred.
-- Network policy is security-sensitive. `OFF` and armed one-shot behavior must not be weakened casually.
+- Network policy is security-sensitive. Ghost, always-listening, and wait modes must not be weakened casually.
 - The network is an ingest path, not the center of the product.
+- The phone is ideally already bootstrapped in peacetime. The USB installer is a fallback.
 - Prefer reuse-first decisions against Project N.O.M.A.D.
 - Prefer adapters, feature flags, and bounded seams over broad rewrites.
 - Keep names aligned to the domain, not the tool.

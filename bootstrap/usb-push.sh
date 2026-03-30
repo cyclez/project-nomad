@@ -24,6 +24,7 @@ DEVICE_STAGING="/data/local/tmp/emergency-nomad-staging"
 DEVICE_RUNTIME="/data/local/tmp/emergency-nomad"
 DAEMON_PORT="1234"
 ACCESS_TOKEN=""
+SERVICE_APK_PATH=""
 
 # ================================================================== defaults
 
@@ -150,6 +151,18 @@ manifest_field() {
   python3 "$JSON_FIELD" "$1" "$2"
 }
 
+find_service_apk() {
+  if [ -f "$SCRIPT_DIR/nomad-service.apk" ]; then
+    printf '%s\n' "$SCRIPT_DIR/nomad-service.apk"
+    return 0
+  fi
+  if [ -f "$SERVICE_APK" ]; then
+    printf '%s\n' "$SERVICE_APK"
+    return 0
+  fi
+  return 0
+}
+
 # Generate a random access token (12 hex chars, 48 bits entropy).
 # Prevents other apps on the device from accessing the daemon at localhost.
 generate_token() {
@@ -222,13 +235,7 @@ install_apk() {
   echo "--- installing service APK ---"
   echo ""
 
-  # Find APK: bundled in package or in apk/ build dir
-  local apk=""
-  if [ -f "$SCRIPT_DIR/nomad-service.apk" ]; then
-    apk="$SCRIPT_DIR/nomad-service.apk"
-  elif [ -f "$SERVICE_APK" ]; then
-    apk="$SERVICE_APK"
-  fi
+  local apk="$SERVICE_APK_PATH"
 
   if [ -z "$apk" ]; then
     echo "warning: nomad-service.apk not found, skipping APK install" >&2
@@ -355,6 +362,8 @@ for tool in python3 unzip tar; do
   echo "$tool: $(command -v "$tool")"
 done
 
+SERVICE_APK_PATH="$(find_service_apk)"
+
 # Check bundle contains bootstrap.json
 if ! unzip -l "$BUNDLE_ZIP" bootstrap.json >/dev/null 2>&1; then
   echo "error: bundle does not contain bootstrap.json at root" >&2
@@ -436,13 +445,19 @@ echo ""
 echo "THIS WILL:"
 echo "  - overwrite any previous emergency-nomad installation on this device"
 echo "  - use storage space on the device"
+if [ -n "$SERVICE_APK_PATH" ]; then
+  echo "  - install the bundled helper APK (com.emergency.nomad)"
+else
+  echo "  - install only the runtime tree (no helper APK bundled on this host)"
+fi
 echo "  - launch a local daemon bound to 127.0.0.1:$DAEMON_PORT"
 echo "  - open a browser on the device (or forward port if --headless)"
 echo ""
 echo "THIS WILL NOT:"
 echo "  - use the network"
-echo "  - install an APK or modify system settings"
 echo "  - root the device"
+echo "  - modify bootloader, recovery, or the system partition"
+echo "  - change radios or airplane-mode state for you"
 echo ""
 if [ "$YES" = true ]; then
   echo "Proceed? [y/N] y  (--yes flag)"

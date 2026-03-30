@@ -1,6 +1,6 @@
 # Emergency Runtime Status
 
-Last updated: 2026-03-27
+Last updated: 2026-03-30
 
 ## Summary
 
@@ -17,7 +17,7 @@ Current status for the Android bootstrap install path:
 | Step | Result |
 |------|--------|
 | `build-test-bundle.sh` | OK — 12K zip, validator pass |
-| Preflight (adb, node, unzip, tar) | OK |
+| Preflight (adb, python3, unzip, tar) | OK |
 | Device detect + compat check | OK |
 | Install plan resolve (arm64, reduced) | OK — 2 extract, 3 seed |
 | Declaration + consent | OK |
@@ -29,6 +29,17 @@ Current status for the Android bootstrap install path:
 | Daemon serves PWA HTML on :1234 | OK — HTTP 200 |
 | 5x install-clean loop | 5/5 pass, 0 fail |
 
+**2026-03-30** — Samsung Galaxy S10e (SM-G970F), API 31, arm64-v8a
+
+| Step | Result |
+|------|--------|
+| Install via `usb-push.sh --yes` | OK |
+| Runtime present after install | OK — `/data/local/tmp/emergency-nomad` |
+| Helper APK installed | OK — `com.emergency.nomad` |
+| Daemon running before reboot | OK — local HTTP 200 on `127.0.0.1:1234` |
+| Reboot recovery without USB restart | OK |
+| Timing note | Android posted `BOOT_COMPLETED` at 05:21:00; app process started at 05:22:00; local runtime answered again without USB shortly after |
+
 ## What Exists Already
 
 These pieces are real, tested, and materially useful:
@@ -38,7 +49,7 @@ These pieces are real, tested, and materially useful:
 - on-device installer via `bootstrap/android/on-device-install.sh`
 - bootstrap bundle schema via `bootstrap/android/bootstrap-manifest.schema.json`
 - host-side manifest validator via `bootstrap/android/validate-bootstrap-manifest.mjs`
-- host-side install-plan resolver via `bootstrap/android/resolve-install-plan.mjs`
+- host-side install-plan resolver via `bootstrap/android/resolve-install-plan.py`
 - auto-watcher via `bootstrap/emergency-watch.sh` (polls for device, auto-installs)
 - simple desktop launchers in `bootstrap/*.command` (install, restart, headless)
 - user-facing install guidance in `INSTALL_GUIDE.md`
@@ -59,8 +70,8 @@ These pieces are real, tested, and materially useful:
 | 2 | Bundle validates against manifest contract | DONE |
 | 3 | USB push works on at least one real device | DONE (S10e) |
 | 4 | Daemon starts reliably after install | DONE (5/5) |
-| 5 | Restart flow works after reboot | untested |
-| 6 | Install guide matches actual steps | partial — needs review after path changes |
+| 5 | Restart flow works after reboot | DONE (S10e, recovers automatically; allow ~2 minutes) |
+| 6 | Install guide matches actual steps | DONE for current Mac flow and source docs |
 
 ## What This Means In Practice
 
@@ -84,7 +95,7 @@ Discovered during real-device testing:
 
 The main reasons are concrete:
 
-- requires `adb` and `node` on the host
+- requires `adb` and `python3` on the host
 - requires USB debugging to be enabled in advance
 - requires the device to have already authorized the host computer
 - reinstall path is destructive: previous runtime is removed before replacement
@@ -96,6 +107,6 @@ The main reasons are concrete:
 
 1. Build the real daemon (compiled binary or better shell httpd)
 2. Build the real PWA with search, maps, status, sync corners
-3. Test `--restart` mode after phone reboot
-4. Test on a second device (different vendor / older API)
+3. Test reboot recovery on a second device/vendor
+4. Test full install on an older API device
 5. Test `--headless` mode for broken screen

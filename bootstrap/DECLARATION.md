@@ -12,8 +12,9 @@ Actions performed:
 3. Extracts and verifies all files from the bundle on the host computer.
 4. Pushes the pre-assembled runtime to the device via USB.
 5. Installs the runtime into device-local storage.
-6. Launches a local daemon bound to 127.0.0.1:1234 (loopback only).
-7. Opens a browser on the device (or forwards the port to the computer
+6. Installs the bundled helper APK `com.emergency.nomad` when it is present.
+7. Launches a local daemon bound to 127.0.0.1:1234 (loopback only).
+8. Opens a browser on the device (or forwards the port to the computer
    if the device screen is broken).
 
 After installation the daemon keeps running when the USB cable is
@@ -22,7 +23,6 @@ disconnected. The device works standalone, offline, with no network.
 ## What this software does NOT do
 
 - Does not root the device.
-- Does not install an APK or modify system settings.
 - Does not modify the bootloader, recovery, or system partition.
 - Does not install system services that survive a factory reset.
 - Does not transmit data from the device to the host or to any network.
@@ -33,28 +33,30 @@ disconnected. The device works standalone, offline, with no network.
 ## What this software uses on the device
 
 - Storage space in /data/local/tmp/emergency-nomad/ (size depends on bundle).
+- One helper APK (`com.emergency.nomad`) installed locally via ADB when bundled.
 - One background process (the daemon) that listens on 127.0.0.1:1234.
 - The daemon is NOT reachable from other devices on any network.
 
 ## Known limitation
 
-If the phone restarts (reboot, battery dies), the daemon stops.
-Reconnect the USB cable and run the restart command to relaunch it.
-The installed files and data are NOT lost — only the daemon needs restarting.
+The helper APK is intended to relaunch the daemon after reboot.
+If a given device does not come back cleanly after restart, reconnect the USB
+cable and run the restart command to relaunch it manually. The installed files
+and data are NOT lost.
 
 ## Network policy
 
 The runtime starts with network policy OFF.
 The device will not attempt any network activity after installation.
 One-shot sync can be armed explicitly by the operator after install.
+If the operator wants the phone radio-silent, they must disable signal
+separately. This installer does not toggle airplane mode or radios.
 
 ## Who should use this
 
-This is experimental emergency software for dedicated development
-and testing devices ("dev-burner" phones).
-
+This is emergency software for dedicated Android utility phones.
 It is NOT recommended for use on a personal daily-driver phone.
-We do not recommend anyone to install this software.
+We do not recommend installing it casually or "just to test it."
 
 ## Preconditions
 

@@ -21,6 +21,13 @@ VENDOR="$SCRIPT_DIR/vendor"
 
 mkdir -p "$OUT"
 
+rewrite_path() {
+  local file="$1" from="$2" to="$3" tmp=""
+  tmp=$(mktemp)
+  sed "s|$from|$to|g" "$file" > "$tmp"
+  mv "$tmp" "$file"
+}
+
 # ================================================================== check vendor deps
 echo "checking bundled dependencies..."
 if [ ! -d "$VENDOR/mac-extract/platform-tools" ]; then
@@ -72,22 +79,21 @@ fi
 cp "$SCRIPT_DIR/Emergency Install.command"              "$MAC/"
 cp "$SCRIPT_DIR/Emergency Restart.command"              "$MAC/"
 cp "$SCRIPT_DIR/Emergency Restart (headless).command"   "$MAC/"
+cp "$SCRIPT_DIR/Emergency Unblock.command"              "$MAC/"
 cp "$SCRIPT_DIR/Emergency Uninstall.command"            "$MAC/"
 cp "$SCRIPT_DIR/Emergency Uninstall (full).command"     "$MAC/"
 cp "$SCRIPT_DIR/Welcome.command"                        "$MAC/"
+cp "$SCRIPT_DIR/README-macOS.txt"                       "$MAC/README.txt"
 
 # Uninstall script
 cp "$SCRIPT_DIR/uninstall.sh"                           "$MAC/tools/"
 
 # Fix launcher paths to point to tools/
 for cmd in "$MAC"/*.command; do
-  sed -i '' 's|./emergency-watch.sh|./tools/emergency-watch.sh|' "$cmd" 2>/dev/null || true
-  sed -i '' 's|./usb-push.sh|./tools/usb-push.sh|' "$cmd" 2>/dev/null || true
-  sed -i '' 's|./uninstall.sh|./tools/uninstall.sh|' "$cmd" 2>/dev/null || true
+  rewrite_path "$cmd" "./emergency-watch.sh" "./tools/emergency-watch.sh"
+  rewrite_path "$cmd" "./usb-push.sh" "./tools/usb-push.sh"
+  rewrite_path "$cmd" "./uninstall.sh" "./tools/uninstall.sh"
 done
-
-# Fix emergency-watch.sh to find usb-push.sh in same dir
-sed -i '' 's|SCRIPT_DIR/usb-push.sh|SCRIPT_DIR/tools/usb-push.sh|' "$MAC/tools/emergency-watch.sh" 2>/dev/null || true
 
 # Bundle
 cp "$BUNDLE" "$MAC/"

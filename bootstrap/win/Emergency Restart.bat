@@ -2,6 +2,11 @@
 title Emergency Nomad — Restart
 cd /d "%~dp0"
 
+echo.
+echo   Fallback restart: use this only if the phone rebooted
+echo   and did not come back by itself after about 2 minutes.
+echo.
+
 call usb-push.bat --restart
 
 echo.
